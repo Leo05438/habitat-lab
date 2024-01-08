@@ -70,10 +70,11 @@ class NavSkillPolicy(NnSkillPolicy):
             filtered_prev_actions[:, 0],
             filtered_prev_actions[:, 1],
         )
+        filtered_obs = self._get_filtered_obs(observations, 0)["object_to_agent_gps_compass"]
         should_stop = (
             torch.abs(lin_vel) < self._config.LIN_SPEED_STOP
             and torch.abs(ang_vel) < self._config.ANG_SPEED_STOP
-        )
+        ) or (filtered_obs[0][0] < 0.55 and filtered_obs[0][1] < 0.2 and filtered_obs[0][1] > -0.2)
         return should_stop
 
     def _parse_skill_arg(self, skill_arg):
